@@ -116,7 +116,7 @@ function setup() {
 
 function draw() {
 
-    background(200);
+    background(22, 22, 59);
 
 
     drawCubes();
@@ -258,17 +258,18 @@ class Cube {
         }
 
         //stroke for shapes in 3D not yet implemented
-        // stroke(230,230,230); 
+        stroke(230,230,230); 
 
         var vt = this.vertices;
         push();
         textureMode(NORMAL);
         for (var i = 0; i < 6; i++) {
             beginShape();
-            if (this.tex != null) {
-                tint(255, CUBE_ALPHA);
-                texture(this.tex);
-            }
+            // if (this.tex != null) {
+            //     tint(255, CUBE_ALPHA);
+            //     texture(this.tex);
+            // }
+            fill(200,50);
             for (var j = 0; j < 4; j++)
                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
             endShape(CLOSE);
