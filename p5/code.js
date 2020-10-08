@@ -276,6 +276,9 @@ class TextCube {
         }
         this.parent = cube;
 
+        this.rotating = true;
+        //to rotate the cubes
+
         this.tex = texture;
         this.id = id;
         this.scale = 1;
