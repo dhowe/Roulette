@@ -196,13 +196,6 @@ class PointUV {
         this.v = v;
     }
 }
-// let PointUV = function(x, y, z, u, v) {
-//     this.x = x;
-//     this.y = y;
-//     this.z = z;
-//     this.u = u;
-//     this.v = v;
-// }
 
 class Cube {
     constructor(name, sz, p) {
@@ -255,8 +248,7 @@ class Cube {
             fill(250);
         }
 
-        //stroke for shapes in 3D not yet implemented
-        // stroke(230,230,230); 
+        stroke(230,230,230); 
 
         let vt = this.vertices;
         push();
