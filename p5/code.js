@@ -93,7 +93,7 @@ function setup() {
     mySound.loop();
 
     //color palette
-    // initializeColors();
+    //initializeColors();
 
 
     // textFont(defaultFont);]
@@ -187,134 +187,302 @@ function drawCubes() {
     }
 }
 
-var PointUV = function(x, y, z, u, v) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.u = u;
-    this.v = v;
+
+//redo below with class
+class PointUV {
+    constructor(x, y, z, u, v) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.u = u;
+        this.v = v;
+    }
 }
+// var PointUV = function(x, y, z, u, v) {
+//     this.x = x;
+//     this.y = y;
+//     this.z = z;
+//     this.u = u;
+//     this.v = v;
+// }
 
-var Cube = function(name, sz, p) {
+class Cube {
+    constructor(name, sz, p) {
+        this.tex = p;
+        this.id = name;
+        this.scale = 1;
+        this.w = this.h = this.d = sz;
+        this.vertices = [];
+        //front
+        this.vertices[0] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[1] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 1, 0);
+        this.vertices[2] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 1, 1);
+        this.vertices[3] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 1);
+        //left
+        this.vertices[4] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[5] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[6] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[7] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 1);
 
-    var w, h, d, vertices = [];
+        //right
+        this.vertices[8] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[9] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[10] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[11] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 0, 1);
 
-    // var x, y, z,  
-    //     xRot, yRot, zRot,
-    //     xSpeed, ySpeed, zSpeed,
-    //     selected, stopped, rotating = true;  
+        //back
+        this.vertices[12] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 0, 0);
+        this.vertices[13] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[14] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[15] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 0, 1);
 
-    this.tex = p;
-    this.id = name;
-    this.scale = 1;
-    w = h = d = sz;
+        //top
+        this.vertices[16] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[17] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[18] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[19] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 0, 1);
 
-    //front
-    vertices[0] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-    vertices[1] = new PointUV(w / 2, -h / 2, d / 2, 1, 0);
-    vertices[2] = new PointUV(w / 2, h / 2, d / 2, 1, 1);
-    vertices[3] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
+        //bottom
+        this.vertices[20] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 0);
+        this.vertices[21] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[22] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[23] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 0, 1);
+    }
 
-    //left
-    vertices[4] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-    vertices[5] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
-    vertices[6] = new PointUV(-w / 2, h / 2, -d / 2, 1, 1);
-    vertices[7] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
-
-    //right
-    vertices[8] = new PointUV(w / 2, -h / 2, d / 2, 0, 0);
-    vertices[9] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
-    vertices[10] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-    vertices[11] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
-
-    //back
-    vertices[12] = new PointUV(-w / 2, -h / 2, -d / 2, 0, 0);
-    vertices[13] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
-    vertices[14] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-    vertices[15] = new PointUV(-w / 2, h / 2, -d / 2, 0, 1);
-
-    //top
-    vertices[16] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-    vertices[17] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
-    vertices[18] = new PointUV(w / 2, -h / 2, -d / 2, 1, 1);
-    vertices[19] = new PointUV(w / 2, -h / 2, d / 2, 0, 1);
-
-    //bottom
-    vertices[20] = new PointUV(-w / 2, h / 2, d / 2, 0, 0);
-    vertices[21] = new PointUV(-w / 2, h / 2, -d / 2, 1, 0);
-    vertices[22] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-    vertices[23] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
-
-    this.vertices = vertices;
-
-
-}
-
-Cube.prototype.draw = function() {
-
-    if (this.tex == null)
-        noFill();
-    else
-        fill(250);
-
-    //stroke for shapes in 3D not yet implemented
-    // stroke(230,230,230); 
-
-    var vt = this.vertices;
-
-    for (var i = 0; i < 6; i++) {
-        beginShape();
-        if (this.tex != null) {
-            tint(255, CUBE_ALPHA);
-            texture(this.tex);
+    draw() {
+        if (this.tex == null) {
+            noFill();
         }
-        for (var j = 0; j < 4; j++)
-            vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
-        endShape(CLOSE);
-    }
+        else {
+            fill(250);
+        }
 
+        //stroke for shapes in 3D not yet implemented
+        // stroke(230,230,230); 
+
+        var vt = this.vertices;
+        push();
+        textureMode(NORMAL);
+        for (var i = 0; i < 6; i++) {
+            beginShape();
+            if (this.tex != null) {
+                tint(255, CUBE_ALPHA);
+                texture(this.tex);
+            }
+            for (var j = 0; j < 4; j++)
+                vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+            endShape(CLOSE);
+        }
+        pop();
+
+    }
 }
 
-var TextCube = function(id, cube, sz, texture) {
-    Cube.apply(this, [id, sz, texture]);
+// var Cube = function(name, sz, p) {
 
-    this.tc = new Array(6);
+//     var w, h, d, vertices = [];
 
-    for (var i = 0; i < this.tc.length; i++) {
-        this.tc[i] = color(colors[Math.floor(random(colors.length))]);
+//     // var x, y, z,  
+//     //     xRot, yRot, zRot,
+//     //     xSpeed, ySpeed, zSpeed,
+//     //     selected, stopped, rotating = true;  
+
+//     this.tex = p;
+//     this.id = name;
+//     this.scale = 1;
+//     w = h = d = sz;
+
+//     //front
+//     vertices[0] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
+//     vertices[1] = new PointUV(w / 2, -h / 2, d / 2, 1, 0);
+//     vertices[2] = new PointUV(w / 2, h / 2, d / 2, 1, 1);
+//     vertices[3] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
+
+//     //left
+//     vertices[4] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
+//     vertices[5] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
+//     vertices[6] = new PointUV(-w / 2, h / 2, -d / 2, 1, 1);
+//     vertices[7] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
+
+//     //right
+//     vertices[8] = new PointUV(w / 2, -h / 2, d / 2, 0, 0);
+//     vertices[9] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
+//     vertices[10] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
+//     vertices[11] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
+
+//     //back
+//     vertices[12] = new PointUV(-w / 2, -h / 2, -d / 2, 0, 0);
+//     vertices[13] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
+//     vertices[14] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
+//     vertices[15] = new PointUV(-w / 2, h / 2, -d / 2, 0, 1);
+
+//     //top
+//     vertices[16] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
+//     vertices[17] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
+//     vertices[18] = new PointUV(w / 2, -h / 2, -d / 2, 1, 1);
+//     vertices[19] = new PointUV(w / 2, -h / 2, d / 2, 0, 1);
+
+//     //bottom
+//     vertices[20] = new PointUV(-w / 2, h / 2, d / 2, 0, 0);
+//     vertices[21] = new PointUV(-w / 2, h / 2, -d / 2, 1, 0);
+//     vertices[22] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
+//     vertices[23] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
+
+//     this.vertices = vertices;
+
+
+// }
+
+// Cube.prototype.draw = function() {
+
+//     if (this.tex == null)
+//         noFill();
+//     else
+//         fill(250);
+
+//     //stroke for shapes in 3D not yet implemented
+//     // stroke(230,230,230); 
+
+//     var vt = this.vertices;
+
+//     for (var i = 0; i < 6; i++) {
+//         beginShape();
+//         if (this.tex != null) {
+//             tint(255, CUBE_ALPHA);
+//             texture(this.tex);
+//         }
+//         for (var j = 0; j < 4; j++)
+//             vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+//         endShape(CLOSE);
+//     }
+
+// }
+
+class TextCube {
+    constructor(id, cube, sz, texture) {
+        this.tc = new Array(6);
+        for (var i = 0; i < this.tc.length; i++) {
+            this.tc[i] = color(colors[Math.floor(random(colors.length))]);
+        }
+        this.parent = cube;
+
+        this.tex = texture;
+        this.id = id;
+        this.scale = 1;
+        this.w = this.h = this.d = sz;
+        this.vertices = [];
+        //front
+        this.vertices[0] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[1] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 1, 0);
+        this.vertices[2] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 1, 1);
+        this.vertices[3] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 1);
+        //left
+        this.vertices[4] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[5] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[6] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[7] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 1);
+
+        //right
+        this.vertices[8] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[9] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[10] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[11] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 0, 1);
+
+        //back
+        this.vertices[12] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 0, 0);
+        this.vertices[13] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[14] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[15] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 0, 1);
+
+        //top
+        this.vertices[16] = new PointUV(-this.w / 2, -this.h / 2, this.d / 2, 0, 0);
+        this.vertices[17] = new PointUV(-this.w / 2, -this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[18] = new PointUV(this.w / 2, -this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[19] = new PointUV(this.w / 2, -this.h / 2, this.d / 2, 0, 1);
+
+        //bottom
+        this.vertices[20] = new PointUV(-this.w / 2, this.h / 2, this.d / 2, 0, 0);
+        this.vertices[21] = new PointUV(-this.w / 2, this.h / 2, -this.d / 2, 1, 0);
+        this.vertices[22] = new PointUV(this.w / 2, this.h / 2, -this.d / 2, 1, 1);
+        this.vertices[23] = new PointUV(this.w / 2, this.h / 2, this.d / 2, 0, 1);
     }
-    this.parent = cube;
-}
 
-TextCube.prototype = {
-    toString: function() {
+    toString() {
         return "[" + this.parent.id + "," + id + "]=" + scale;
-    },
+    }
 
-    setScale: function(factor) {
-        if (factor > 1 && this.scale >= maxSize)
+    setScale(factor) {
+        if (factor > 1 && this.scale >= maxSize) {
             return false;
-        if (factor < 1 && this.scale <= 1)
+        }
+        if (factor < 1 && this.scale <= 1) {
             return false;
+        }
         this.scale *= factor;
         return true;
-    },
+    }
 
-    draw: function() {
+    draw() {
         noStroke();
         var vt = this.vertices;
+        push();
+        textureMode(NORMAL);
         for (var i = 0; i < 6; i++) {
             fill(255);
             beginShape();
             tint(this.tc[i]);
             texture(this.tex);
 
-            for (var j = 0; j < 4; j++)
+            for (var j = 0; j < 4; j++) {
                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+            }
             endShape(CLOSE);
         }
+        pop();
     }
-};
+
+}
+
+// var TextCube = function (id, cube, sz, texture) {
+//     Cube.apply(this, [id, sz, texture]);
+
+//     this.tc = new Array(6);
+
+//     for (var i = 0; i < this.tc.length; i++) {
+//         this.tc[i] = color(colors[Math.floor(random(colors.length))]);
+//     }
+//     this.parent = cube;
+// }
+
+// TextCube.prototype = {
+//     toString: function () {
+//         return "[" + this.parent.id + "," + id + "]=" + scale;
+//     },
+
+//     setScale: function (factor) {
+//         if (factor > 1 && this.scale >= maxSize)
+//             return false;
+//         if (factor < 1 && this.scale <= 1)
+//             return false;
+//         this.scale *= factor;
+//         return true;
+//     },
+
+//     draw: function () {
+//         noStroke();
+//         var vt = this.vertices;
+//         for (var i = 0; i < 6; i++) {
+//             fill(255);
+//             beginShape();
+//             tint(this.tc[i]);
+//             texture(this.tex);
+
+//             for (var j = 0; j < 4; j++)
+//                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+//             endShape(CLOSE);
+//         }
+//     }
+// };
 
 function createCubes() {
     var idx = 0;
@@ -575,7 +743,7 @@ function mouseReleased() {
         } else
             updateText(); // TODO
     }
-   
+
     selectedParentIdx = -1;
     selectedCubeIdx = -1;
 
