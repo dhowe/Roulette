@@ -1,10 +1,10 @@
-// var SHOW_BORDER, SHOW_TITLES, SHOW_IMAGES = true, SHOW_COPYRIGHT;
-// var FONT_18 = "Modern-Regular-18.vlw", FONT_15 = "Modern-Regular-15.vlw", FONT_12 = "Modern-Regular-12.vlw", FONT_13 = "Modern-Regular-13.vlw", FONT_14 = "Modern-Regular-14.vlw";
+// let SHOW_BORDER, SHOW_TITLES, SHOW_IMAGES = true, SHOW_COPYRIGHT;
+// let FONT_18 = "Modern-Regular-18.vlw", FONT_15 = "Modern-Regular-15.vlw", FONT_12 = "Modern-Regular-12.vlw", FONT_13 = "Modern-Regular-13.vlw", FONT_14 = "Modern-Regular-14.vlw";
 
 
-var ROTATE, SHOW_GUIDES, UPPERCASE, DO_FADES = true,
+let ROTATE, SHOW_GUIDES, UPPERCASE, DO_FADES = true,
     BLACK_BG = true;
-var NUM_LG = 3,
+let NUM_LG = 3,
     CUBE_ALPHA = 64,
     NUM_CUBES = 38,
     WALL_OFFSET = 15,
@@ -12,25 +12,23 @@ var NUM_LG = 3,
     MAX_LINE_WIDTH = 500,
     TEXT_X_START = 200,
     TEXT_Y_START = 440;
-// var DELIM = "<", SPC = " ", HEX_BG = "181828";
+// let DELIM = "<", SPC = " ", HEX_BG = "181828";
 
-var INFO_IMAGES = ["instructions.png", "roulette.png", "copyright.png"];
+let INFO_IMAGES = ["instructions.png", "roulette.png", "copyright.png"];
 
 //color
-// var DEFAULT_BG, TEXT_COLOR, INFO_COLOR, HOT_COLOR;
+// let DEFAULT_BG, TEXT_COLOR, INFO_COLOR, HOT_COLOR;
 
-var tex; //texture
-var info = [],
+let tex; //texture
+let info = [],
     currentText = [],
     textFromFile;
 
-var fadeOuts, rtLines;
+let fadeOuts, rtLines;
 
-var currentTextIdxs = [],
-    largeCubes = [],
-    cubes = [];
+let currentTextIdxs = [];
 
-var textColor, hotColor, bgColor,
+let textColor, hotColor, bgColor,
     // rotateX=[0,0,0], rotateY=[0,0,0], rotateZ=[0,0,0],
     selectedCubeIdx = -1,
     selectedParentIdx = 0,
@@ -42,7 +40,7 @@ var textColor, hotColor, bgColor,
     hotWords = [],
     homeUrl;
 
-var colors = [
+let colors = [
     '#f9f9f9', // white (text)
     '#eaf9f2', // light-teal
     '#f4dc00', // yellow
@@ -55,15 +53,15 @@ var colors = [
     '#7c0b00' // red      
 ];
 
-// var defaultFont;
+// let defaultFont;
 
-var imgs = [],
+let imgs = [],
     blank; // test
-var cubes = [],
+let cubes = [],
     largeCubes = [];
 
 // BGM
-var mySound;
+let mySound;
 
 function preload() {
 
@@ -71,8 +69,8 @@ function preload() {
 
     //load images
     // words
-    for (var i = 0; i < 109; i++) {
-        var idx = i + 1;
+    for (let i = 0; i < 109; i++) {
+        let idx = i + 1;
         imgs[i] = loadImage("../src/data/" + idx + ".png");
     }
 
@@ -97,7 +95,7 @@ function setup() {
 
 
     // textFont(defaultFont);]
-    // for (var i = 0; i < riLines.length; i++)
+    // for (let i = 0; i < riLines.length; i++)
     //   riLines[i] = new LinkedList();
 
     // spaceWidth = textWidth(SPC);
@@ -128,10 +126,10 @@ function draw() {
 
 function drawCubes() {
 
-    for (var j = 0; j < NUM_LG; j++) {
+    for (let j = 0; j < NUM_LG; j++) {
         push();
 
-        var yOff = height / 3;
+        let yOff = height / 3;
         switch (j) {
             case 0:
                 yOff = height / 3 + 40;
@@ -149,8 +147,8 @@ function drawCubes() {
 
         //ellipse(0,0,210,210);        
 
-        for (var i = 0; i < cubes[j].length; i++) {
-            var tc = cubes[j][i];
+        for (let i = 0; i < cubes[j].length; i++) {
+            let tc = cubes[j][i];
             push();
 
             if (!tc.selected && !tc.stopped)
@@ -198,7 +196,7 @@ class PointUV {
         this.v = v;
     }
 }
-// var PointUV = function(x, y, z, u, v) {
+// let PointUV = function(x, y, z, u, v) {
 //     this.x = x;
 //     this.y = y;
 //     this.z = z;
@@ -260,16 +258,16 @@ class Cube {
         //stroke for shapes in 3D not yet implemented
         // stroke(230,230,230); 
 
-        var vt = this.vertices;
+        let vt = this.vertices;
         push();
         textureMode(NORMAL);
-        for (var i = 0; i < 6; i++) {
+        for (let i = 0; i < 6; i++) {
             beginShape();
             if (this.tex != null) {
                 tint(255, CUBE_ALPHA);
                 texture(this.tex);
             }
-            for (var j = 0; j < 4; j++)
+            for (let j = 0; j < 4; j++)
                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
             endShape(CLOSE);
         }
@@ -278,90 +276,10 @@ class Cube {
     }
 }
 
-// var Cube = function(name, sz, p) {
-
-//     var w, h, d, vertices = [];
-
-//     // var x, y, z,  
-//     //     xRot, yRot, zRot,
-//     //     xSpeed, ySpeed, zSpeed,
-//     //     selected, stopped, rotating = true;  
-
-//     this.tex = p;
-//     this.id = name;
-//     this.scale = 1;
-//     w = h = d = sz;
-
-//     //front
-//     vertices[0] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-//     vertices[1] = new PointUV(w / 2, -h / 2, d / 2, 1, 0);
-//     vertices[2] = new PointUV(w / 2, h / 2, d / 2, 1, 1);
-//     vertices[3] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
-
-//     //left
-//     vertices[4] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-//     vertices[5] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
-//     vertices[6] = new PointUV(-w / 2, h / 2, -d / 2, 1, 1);
-//     vertices[7] = new PointUV(-w / 2, h / 2, d / 2, 0, 1);
-
-//     //right
-//     vertices[8] = new PointUV(w / 2, -h / 2, d / 2, 0, 0);
-//     vertices[9] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
-//     vertices[10] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-//     vertices[11] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
-
-//     //back
-//     vertices[12] = new PointUV(-w / 2, -h / 2, -d / 2, 0, 0);
-//     vertices[13] = new PointUV(w / 2, -h / 2, -d / 2, 1, 0);
-//     vertices[14] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-//     vertices[15] = new PointUV(-w / 2, h / 2, -d / 2, 0, 1);
-
-//     //top
-//     vertices[16] = new PointUV(-w / 2, -h / 2, d / 2, 0, 0);
-//     vertices[17] = new PointUV(-w / 2, -h / 2, -d / 2, 1, 0);
-//     vertices[18] = new PointUV(w / 2, -h / 2, -d / 2, 1, 1);
-//     vertices[19] = new PointUV(w / 2, -h / 2, d / 2, 0, 1);
-
-//     //bottom
-//     vertices[20] = new PointUV(-w / 2, h / 2, d / 2, 0, 0);
-//     vertices[21] = new PointUV(-w / 2, h / 2, -d / 2, 1, 0);
-//     vertices[22] = new PointUV(w / 2, h / 2, -d / 2, 1, 1);
-//     vertices[23] = new PointUV(w / 2, h / 2, d / 2, 0, 1);
-
-//     this.vertices = vertices;
-
-
-// }
-
-// Cube.prototype.draw = function() {
-
-//     if (this.tex == null)
-//         noFill();
-//     else
-//         fill(250);
-
-//     //stroke for shapes in 3D not yet implemented
-//     // stroke(230,230,230); 
-
-//     var vt = this.vertices;
-
-//     for (var i = 0; i < 6; i++) {
-//         beginShape();
-//         if (this.tex != null) {
-//             tint(255, CUBE_ALPHA);
-//             texture(this.tex);
-//         }
-//         for (var j = 0; j < 4; j++)
-//             vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
-//         endShape(CLOSE);
-//     }
-
-// }
-
 class TextCube {
     constructor(id, cube, sz, texture) {
         this.tc = new Array(6);
-        for (var i = 0; i < this.tc.length; i++) {
+        for (let i = 0; i < this.tc.length; i++) {
             this.tc[i] = color(colors[Math.floor(random(colors.length))]);
         }
         this.parent = cube;
@@ -424,16 +342,16 @@ class TextCube {
 
     draw() {
         noStroke();
-        var vt = this.vertices;
+        let vt = this.vertices;
         push();
         textureMode(NORMAL);
-        for (var i = 0; i < 6; i++) {
+        for (let i = 0; i < 6; i++) {
             fill(255);
             beginShape();
             tint(this.tc[i]);
             texture(this.tex);
 
-            for (var j = 0; j < 4; j++) {
+            for (let j = 0; j < 4; j++) {
                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
             }
             endShape(CLOSE);
@@ -443,57 +361,16 @@ class TextCube {
 
 }
 
-// var TextCube = function (id, cube, sz, texture) {
-//     Cube.apply(this, [id, sz, texture]);
-
-//     this.tc = new Array(6);
-
-//     for (var i = 0; i < this.tc.length; i++) {
-//         this.tc[i] = color(colors[Math.floor(random(colors.length))]);
-//     }
-//     this.parent = cube;
-// }
-
-// TextCube.prototype = {
-//     toString: function () {
-//         return "[" + this.parent.id + "," + id + "]=" + scale;
-//     },
-
-//     setScale: function (factor) {
-//         if (factor > 1 && this.scale >= maxSize)
-//             return false;
-//         if (factor < 1 && this.scale <= 1)
-//             return false;
-//         this.scale *= factor;
-//         return true;
-//     },
-
-//     draw: function () {
-//         noStroke();
-//         var vt = this.vertices;
-//         for (var i = 0; i < 6; i++) {
-//             fill(255);
-//             beginShape();
-//             tint(this.tc[i]);
-//             texture(this.tex);
-
-//             for (var j = 0; j < 4; j++)
-//                 vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
-//             endShape(CLOSE);
-//         }
-//     }
-// };
-
 function createCubes() {
-    var idx = 0;
+    let idx = 0;
 
-    for (var j = 0; j < NUM_LG; j++) {
+    for (let j = 0; j < NUM_LG; j++) {
         largeCubes[j] = new Cube(NUM_LG, lgCubeSize, blank);
         largeCubes[j].x = (j + 1) * width / 4;
         //console.log("CUBE "+j+":\n");
         cubes[j] = new Array(NUM_CUBES);
-        for (var i = 0; i < NUM_CUBES; i++) {
-            var cubeSz = 15; /// random(15, 15);
+        for (let i = 0; i < NUM_CUBES; i++) {
+            let cubeSz = 15; /// random(15, 15);
 
             cubes[j][i] = new TextCube(i, largeCubes[j], cubeSz, imgs[i]);
 
@@ -533,9 +410,9 @@ function selectCube(parentIdx, idx) {
 }
 
 function getSelected(i) {
-    var selectedIdx = -1;
-    var all = cubes[i];
-    for (var j = 0; j < all.length; j++)
+    let selectedIdx = -1;
+    let all = cubes[i];
+    for (let j = 0; j < all.length; j++)
         if (all[j].selected) selectedIdx = j;
     return selectedIdx;
 }
@@ -543,24 +420,24 @@ function getSelected(i) {
 function clearAll() {
     selectedParentIdx = -1;
     selectedCubeIdx = -1;
-    for (var j = 0; j < NUM_LG; j++)
+    for (let j = 0; j < NUM_LG; j++)
         clearCube(j);
 }
 
 function clearCube(j) {
-    for (var i = 0; i < cubes[j].length; i++)
+    for (let i = 0; i < cubes[j].length; i++)
         cubes[j][i].selected = false;
 }
 
 // function updateText() {
 //     if (firstTextCreation) {
-//         var positions = [Math.floor(random(NUM_CUBES)),
+//         let positions = [Math.floor(random(NUM_CUBES)),
 //             Math.floor(random(NUM_CUBES)), Math.floor(random(NUM_CUBES))
 //         ];
 //         createRiTexts(positions);
 //         firstTextCreation = false;
 //     } else {
-//         var newText = textFromFile[selectedParentIdx][selectedCubeIdx];
+//         let newText = textFromFile[selectedParentIdx][selectedCubeIdx];
 //         currentTextIdxs[selectedParentIdx] = selectedCubeIdx;
 //         this.currentSelectedWord[selectedParentIdx] = hotWords[selectedParentIdx][selectedCubeIdx];
 //         //console.log("*** ["+selectedParentIdx+","+selectedCubeIdx+"] currentSelectedWord["+selectedParentIdx+"]='"+currentSelectedWord[selectedParentIdx]+"' newText="+newText+"\n");
@@ -569,7 +446,7 @@ function clearCube(j) {
 // }
 
 // function handleTextReplace(newText, position) {
-//     var toAdd = null;
+//     let toAdd = null;
 //     switch (position) {
 //         case 0:
 //             toAdd = handleReplaceFirst(newText);
@@ -577,7 +454,7 @@ function clearCube(j) {
 //             break;
 //         case 1:
 //             //this.currentSelectedWord[1] = hotWords[1][selectedCubeIdx];
-//             for (var i = 0; i < NUM_LG; i++)
+//             for (let i = 0; i < NUM_LG; i++)
 //                 fadeOutAt(i);
 //             createRiTexts(currentTextIdxs);
 //             return;
@@ -588,8 +465,8 @@ function clearCube(j) {
 //     }
 
 //     // add all the replacements
-//     for (var i = toAdd.length - 1; i >= 0; i--) {
-//         var rtw = toAdd[i]; //(RiTextWords)
+//     for (let i = toAdd.length - 1; i >= 0; i--) {
+//         let rtw = toAdd[i]; //(RiTextWords)
 //         if (position == 0 && i == 0) {
 //             rtw.x -= spaceWidth;
 //             //console.log("ADDED SPC: ["+rtw.getText()+rtw.getText()+"]");
@@ -602,14 +479,14 @@ function clearCube(j) {
 
 // function handleReplaceLast(newText) {
 //     // console.log("NEW: " + newText);
-//     var next = null,
+//     let next = null,
 //         toAdd;
-//     var remaining = newText;
+//     let remaining = newText;
 
-//     var lastOld = lastRiTextFor(1);
-//     var firstNew = firstRiTextFor(2);
+//     let lastOld = lastRiTextFor(1);
+//     let firstNew = firstRiTextFor(2);
 
-//     var maxWidth = ((TEXT_X_START + MAX_LINE_WIDTH) - firstNew.x),
+//     let maxWidth = ((TEXT_X_START + MAX_LINE_WIDTH) - firstNew.x),
 //         firstLine = trimToWidth(remaining, maxWidth);
 
 //     if (firstLine.length() > 0) {
@@ -625,7 +502,7 @@ function clearCube(j) {
 //         remaining = newText.substring(firstLine.length());
 //         while (remaining.length() > 0) {
 //             firstLine = trimToWidth(remaining, MAX_LINE_WIDTH);
-//             var yAlign = firstNew.y;
+//             let yAlign = firstNew.y;
 //             if (next != null) {
 //                 yAlign = next.y;
 //             } else
@@ -644,14 +521,14 @@ function clearCube(j) {
 // }
 
 // function handleReplaceFirst(newText) {
-//     var toAdd;
+//     let toAdd;
 
 //     // do the last line first
-//     var next = null;
-//     var remaining = newText;
-//     var firstNew = firstRiTextFor(1);
+//     let next = null;
+//     let remaining = newText;
+//     let firstNew = firstRiTextFor(1);
 
-//     var maxWidth = (firstNew.x - TEXT_X_START) + 1,
+//     let maxWidth = (firstNew.x - TEXT_X_START) + 1,
 //         lastLine = reverseTrimToWidth(remaining, maxWidth);
 //     if (lastLine.length() > 0) {
 //         next = new RiText(this, lastLine, firstNew.x, firstNew.y, RIGHT);
@@ -659,14 +536,14 @@ function clearCube(j) {
 //     }
 
 //     // check if there are other lines if there are any
-//     var numLeftOver = remaining.length() - lastLine.length();
+//     let numLeftOver = remaining.length() - lastLine.length();
 //     if (numLeftOver > 0) {
 
 //         // process the rest of the text in a loop
 //         remaining = newText.substring(0, numLeftOver);
 //         while (remaining.length() > 0) {
 //             lastLine = reverseTrimToWidth(remaining, MAX_LINE_WIDTH);
-//             var yAlign = next != null ? next.y : firstNew.y,
+//             let yAlign = next != null ? next.y : firstNew.y,
 //                 xAlign = firstNew.x + textWidth(firstNew.getText());
 //             next = new RiText(this, lastLine, xAlign + 5, yAlign - leading, RIGHT);
 //             addToPositionList(toAdd, next, 0);
@@ -683,8 +560,8 @@ function clearCube(j) {
 
 // function addToPositionList(toAdd, rt, position) {
 
-//     var align = rt.alignment;
-//     var text = rt.getText();
+//     let align = rt.alignment;
+//     let text = rt.getText();
 //     while (text.startsWith(" "))
 //         text = text.substring(1);
 
@@ -692,20 +569,20 @@ function clearCube(j) {
 //         text = text.substring(0, text.length() - 1);
 
 //     //console.log(position+"->("+text+")");
-//     var next = new RiTextWords(this, text, rt.x, rt.y, align);
+//     let next = new RiTextWords(this, text, rt.x, rt.y, align);
 //     text = next.getText();
 //     //console.log(position+": TEXT: "+text);
 
-//     var hot = currentSelectedWord[position];
+//     let hot = currentSelectedWord[position];
 //     if (!firstTextCreation) {
 //         if (hot == null)
 //             console.log("Null hotword: " + " for " + text + "position=" + position);
 
-//         var words = text.split(" ");
+//         let words = text.split(" ");
 
-//         var isSelected = getSelected(position) > -1;
+//         let isSelected = getSelected(position) > -1;
 
-//         for (var i = 0; i < words.length; i++) {
+//         for (let i = 0; i < words.length; i++) {
 //             if (isSelected && words[i].startsWith(hot))
 //                 next.setColor(i, hotColor);
 //             else
