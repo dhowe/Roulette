@@ -82,8 +82,6 @@ function preload() {
     soundFormats('mp3', 'ogg');
     mySound = loadSound('../src/data/rpeg.mp3');
 
-    font = loadFont('../src/data/Georgia.ttf');
-
 }
 
 function setup() {
@@ -109,14 +107,11 @@ function setup() {
     // createTitles();
 
     createCubes();
-    textFont(font);
-
 }
 
 function draw() {
 
     background(200);
-    text('fps:' + int(frameRate()), -width / 2, -height / 2 + 10);
     //
     drawCubes();
     // if (mousePressed && mouseY > height * .2 && mouseY < height * .6)
@@ -386,7 +381,7 @@ class TextCube {
         //     endShape(CLOSE);
         // }
 
-        //use plane
+        //use plane => no need veritces
         let a = this.w;
         let d = a/2
         for (let i = 0; i < 6; i++) {
