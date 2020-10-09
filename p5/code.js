@@ -82,6 +82,7 @@ function preload() {
     soundFormats('mp3', 'ogg');
     mySound = loadSound('../src/data/rpeg.mp3');
 
+    font = loadFont('../src/data/Georgia.ttf');
 
 }
 
@@ -89,7 +90,6 @@ function setup() {
     createCanvas(900, 670, WEBGL);
     frameRate(30);
     mySound.loop();
-
     //color palette
     //initializeColors();
 
@@ -109,14 +109,15 @@ function setup() {
     // createTitles();
 
     createCubes();
+    textFont(font);
 
 }
 
 function draw() {
 
     background(200);
-
-
+    text('fps:' + int(frameRate()), -width / 2, -height / 2 + 10);
+    //
     drawCubes();
     // if (mousePressed && mouseY > height * .2 && mouseY < height * .6)
     //     handleZoom();
@@ -125,6 +126,7 @@ function draw() {
 }
 
 function drawCubes() {
+    textureMode(NORMAL);
 
     for (let j = 0; j < NUM_LG; j++) {
         push();
@@ -241,30 +243,63 @@ class Cube {
     }
 
     draw() {
-        if (this.tex == null) {
-            noFill();
-        }
-        else {
-            fill(250);
-        }
+        //use vertices
+        // if (this.tex == null) {
+        //     noFill();
+        // }
+        // else {
+        //     fill(250);
+        //     tint(255, CUBE_ALPHA);
+        //     texture(this.tex);
+        // }
+        // // the 6 plane should have the same texture
+        // stroke(230, 230, 230);
+        // let vt = this.vertices;
+        // for (let i = 0; i < 6; i++) {
+        //     //what if using plane?
+        //     beginShape();
+        //     for (let j = 0; j < 4; j++)
+        //         vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+        //     endShape(CLOSE);
+        // }
 
-        stroke(230,230,230); 
-
-        let vt = this.vertices;
-        push();
-        textureMode(NORMAL);
+        //use plane => seems ok, dont need vertices
+        //fill(250);
+        tint(255, CUBE_ALPHA);
+        texture(this.tex);
+        noStroke();
+        let a = this.w;
+        let d = a / 2;
         for (let i = 0; i < 6; i++) {
-            beginShape();
-            if (this.tex != null) {
-                tint(255, CUBE_ALPHA);
-                texture(this.tex);
+            noStroke();
+            push();
+            if (i == 0) {
+                //front
+                translate(0, 0, d);
+            } else if (i == 1) {
+                //left
+                translate(-d, 0, 0);
+                rotateY(-PI / 2);
+            } else if (i == 2) {
+                //right
+                translate(d, 0, 0);
+                rotateY(PI / 2);
+            } else if (i == 3) {
+                //back
+                translate(0, 0, -d);
+                rotateX(PI);
+            } else if (i == 4) {
+                //top
+                translate(0, -d, 0);
+                rotateX(-PI / 2);
+            } else if (i == 5) {
+                //bottom
+                translate(0, d, 0);
+                rotateX(PI / 2);
             }
-            for (let j = 0; j < 4; j++)
-                vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
-            endShape(CLOSE);
+            plane(a);
+            pop();
         }
-        pop();
-
     }
 }
 
@@ -336,22 +371,57 @@ class TextCube {
     }
 
     draw() {
-        noStroke();
-        let vt = this.vertices;
-        push();
-        textureMode(NORMAL);
+        //use vertices
+        // noStroke();
+        // let vt = this.vertices;
+
+        // for (let i = 0; i < 6; i++) {
+        //     fill(255);
+        //     beginShape();
+        //     tint(this.tc[i]);
+        //     texture(this.tex);
+        //     for (let j = 0; j < 4; j++) {
+        //         vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+        //     }
+        //     endShape(CLOSE);
+        // }
+
+        //use plane
+        let a = this.w;
+        let d = a/2
         for (let i = 0; i < 6; i++) {
+            noStroke();
             fill(255);
-            beginShape();
             tint(this.tc[i]);
             texture(this.tex);
-
-            for (let j = 0; j < 4; j++) {
-                vertex(vt[j + 4 * i].x, vt[j + 4 * i].y, vt[j + 4 * i].z, vt[j + 4 * i].u, vt[j + 4 * i].v);
+            push();
+            if (i == 0) {
+                //front
+                translate(0, 0, d);
+            } else if (i == 1) {
+                //left
+                translate(-d, 0, 0);
+                rotateY(-PI / 2);
+            } else if (i == 2) {
+                //right
+                translate(d, 0, 0);
+                rotateY(PI / 2);
+            } else if (i == 3) {
+                //back
+                translate(0, 0, -d);
+                rotateX(PI);
+            } else if (i == 4) {
+                //top
+                translate(0, -d, 0);
+                rotateX(-PI / 2);
+            } else if (i == 5) {
+                //bottom
+                translate(0, d, 0);
+                rotateX(PI / 2);
             }
-            endShape(CLOSE);
+            plane(a, a);
+            pop();
         }
-        pop();
     }
 
 }
