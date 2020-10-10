@@ -260,7 +260,7 @@ class Cube {
 
         //use plane => seems ok, dont need vertices
         //fill(250);
-        tint(255, CUBE_ALPHA);
+        //tint(255, CUBE_ALPHA);
         texture(this.tex);
         noStroke();
         let a = this.w;
