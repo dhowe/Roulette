@@ -261,40 +261,46 @@ class Cube {
         //use plane => seems ok, dont need vertices
         //fill(250);
         //tint(255, CUBE_ALPHA);
-        texture(this.tex);
-        noStroke();
+        //texture(this.tex);
+        fill(255,CUBE_ALPHA);
+        //noStroke();
+        stroke(255);
+        strokeWeight(1.5);
         let a = this.w;
         let d = a / 2;
-        for (let i = 0; i < 6; i++) {
-            noStroke();
-            push();
-            if (i == 0) {
-                //front
-                translate(0, 0, d);
-            } else if (i == 1) {
-                //left
-                translate(-d, 0, 0);
-                rotateY(-PI / 2);
-            } else if (i == 2) {
-                //right
-                translate(d, 0, 0);
-                rotateY(PI / 2);
-            } else if (i == 3) {
-                //back
-                translate(0, 0, -d);
-                rotateX(PI);
-            } else if (i == 4) {
-                //top
-                translate(0, -d, 0);
-                rotateX(-PI / 2);
-            } else if (i == 5) {
-                //bottom
-                translate(0, d, 0);
-                rotateX(PI / 2);
-            }
-            plane(a);
-            pop();
-        }
+        // for (let i = 0; i < 6; i++) {
+        //     push();
+        //     if (i == 0) {
+        //         //front
+        //         translate(0, 0, d);
+        //     } else if (i == 1) {
+        //         //left
+        //         translate(-d, 0, 0);
+        //         rotateY(-PI / 2);
+        //     } else if (i == 2) {
+        //         //right
+        //         translate(d, 0, 0);
+        //         rotateY(PI / 2);
+        //     } else if (i == 3) {
+        //         //back
+        //         translate(0, 0, -d);
+        //         rotateX(PI);
+        //     } else if (i == 4) {
+        //         //top
+        //         translate(0, -d, 0);
+        //         rotateX(-PI / 2);
+        //     } else if (i == 5) {
+        //         //bottom
+        //         translate(0, d, 0);
+        //         rotateX(PI / 2);
+        //     }
+        //     plane(a);
+        //     pop();
+        // }
+
+        //utimate form: use box, not sure if ok for zooming ect.
+        box(a);
+        
     }
 }
 
