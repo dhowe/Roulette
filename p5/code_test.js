@@ -1,17 +1,23 @@
 var img;
 function preload() {
-    img = loadImage("../src/data/transparent.png");
+    img = loadImage("../src/data/1.png");
 }
 
 function setup() {
     createCanvas(700, 700, WEBGL);
-    pg = createGraphics(img.width,img.height);
-    pg.background(255,64);
+    pg = createGraphics(img.width, img.height);
+    pg.background(255, 64);
     pg.stroke(255);
     pg.strokeWeight(1);
     pg.noFill();
-    pg.rect(0,0,img.width,img.height);
-     v = PI;
+    pg.rect(0, 0, img.width, img.height);
+    let c = color('#f4dc00');
+    console.log(c);
+    r = red(c);
+    g = green(c);
+    b = blue(c);
+    cA = [r, g, b];
+    console.log(r, g, b);
 
 }
 
@@ -45,14 +51,13 @@ function draw() {
     texture(pg);
 
     push();
-    translate(125,125,-50);
+    translate(125, 125, -50);
     noStroke();
     plane(50);
     pop();
-    
+
     push();
-    translate(125,125,0);
-    rotateX(v);
+    translate(125, 125, 0);
     noStroke();
     plane(250);
     pop();
@@ -73,29 +78,38 @@ function draw() {
     // }
 
     //use plane
-    // push();
-    // noStroke();
-    // push();
-    // translate(100,0,0);
-    // fill(255,0,0);
-    // box(10);
-    // pop();
-    // push();
-    // translate(0,100,0);
-    // fill(0,255,0);
-    // box(10);
-    // pop();
-    // push();
-    // translate(0,0,100);
-    // fill(0,0,255);
-    // box(10);
-    // pop();
+    push();
+    noStroke();
+    push();
+    translate(100, 0, 0);
+    fill(255, 0, 0);
+    box(10);
+    pop();
+    push();
+    translate(0, 100, 0);
+    fill(0, 255, 0);
+    box(10);
+    pop();
+    push();
+    translate(0, 0, 100);
+    fill(0, 0, 255);
+    box(10);
+    pop();
 
-    // for (i = 0; i < 6; i++) {
-    //     //noStroke();
-    //     //noFill();
-    //     fill(255,64);
-    //     stroke(255);
+    push();
+    fill(233, 0, 233);
+    box(20);
+    pop();
+    let suc = new Cube(1,50,img);
+    suc.draw();
+
+    // for (let i = 0; i < 6; i++) {
+    //     noStroke();
+    //     noFill();
+    //     texture(img);
+    //     tint(cA[0],cA[1],cA[2],100);
+    //     //fill(255,64);
+    //     //stroke(255);
     //     //texture(pg);
     //     let a = 100;
     //     let d = a / 2;
@@ -128,19 +142,83 @@ function draw() {
     //     plane(a, a);
     //     pop();
     // }
+
+    // //use box()
+    // push();
+    // fill(255, 64);
+    // stroke(255);
+    // //texture(pg);
+    // //noStroke();
+    // box(100);
     // pop();
 
-    //use box()
+    //use class
+    let cub = new Cube(1,100,img);
+    cub.draw();
+
     push();
-    fill(255,64);
-    stroke(255);
-    //texture(pg);
-    //noStroke();
-    box(100);
+    fill(233, 233, 0, 100);
+    box(50);
     pop();
+
+    pop();
+    
+    // //use box()
+    // push();
+    // fill(255,64);
+    // stroke(255);
+    // //texture(pg);
+    // //noStroke();
+    // box(100);
+    // pop();
 
 }
 
-function mounsePressed(){
-    v += PI;
+class Cube {
+    constructor(name, a, texture) {
+        this.id = name;
+        this.w = this.h = this.d = a;
+        this.tex = texture;
+    }
+
+    draw() {
+        for (let i = 0; i < 6; i++) {
+            noStroke();
+            noFill();
+            texture(this.tex);
+            tint(cA[0], cA[1], cA[2], 100);
+            //fill(255,64);
+            //stroke(255);
+            //texture(pg);
+            let d = this.w / 2;
+            push();
+            if (i == 0) {
+                //front
+                rotateX(PI);
+                translate(0, 0, d);
+            } else if (i == 1) {
+                //left *
+                translate(-d, 0, 0);
+                rotateY(-PI / 2);
+            } else if (i == 2) {
+                //right
+                translate(d, 0, 0);
+                rotateY(PI / 2);
+            } else if (i == 3) {
+                //back *
+                rotateX(PI);
+                translate(0, 0, -d);
+            } else if (i == 4) {
+                //top
+                translate(0, -d, 0);
+                rotateX(-PI / 2);
+            } else if (i == 5) {
+                //bottom
+                translate(0, d, 0);
+                rotateX(PI / 2);
+            }
+            plane(this.w, this.w);
+            pop();
+        }
+    }
 }

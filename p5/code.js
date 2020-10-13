@@ -59,6 +59,13 @@ let imgs = [],
     blank; // test
 let cubes = [],
     largeCubes = [];
+let selectedTextCubes = [];
+let selectedTextCubesIdx = [];
+// the selectedCubes should be draw fist among the textcubes or it will
+// cover other cubes
+
+let changingCubes = [];
+// this array store cubes zooming, when the process is done they should be erased
 
 // BGM
 let mySound;
@@ -78,6 +85,7 @@ function preload() {
 
     // info images
     // text
+    // TODO?
 
     soundFormats('mp3', 'ogg');
     mySound = loadSound('../src/data/rpeg.mp3');
@@ -114,9 +122,15 @@ function draw() {
     background(200);
     //
     drawCubes();
-    // if (mousePressed && mouseY > height * .2 && mouseY < height * .6)
-    //     handleZoom();
-    // TODO
+    //if (mouseIsPressed && mouseY > height * .2 && mouseY < height * .6) {
+        // handleZoom();
+        // TODO
+    //}
+    if (changingCubes.length > 0) {
+        for (let i = 0; i < changingCubes.length; i ++) {
+            zooming(changingCubes[i][0],changingCubes[i][1]);
+        }
+    }
 
 }
 
@@ -143,8 +157,42 @@ function drawCubes() {
         rotateZ(rotateZ[j] = (frameCount * PI / 275 + 2 * j));
 
         //ellipse(0,0,210,210);        
+        let skipIdx = -1;
+
+        for (let i = 0; i < selectedTextCubesIdx.length; i++) {
+            let idxPair = selectedTextCubesIdx[i];
+            if (idxPair[0] == j) {
+                skipIdx = idxPair[1];
+                let selectedTc = cubes[j][idxPair[1]];
+                push();
+                scale(selectedTc.scale);
+                selectedTc.draw();
+                pop();
+                // adjust the speeds
+                cubes[j][skipIdx].x += cubes[j][skipIdx].xSpeed;
+                cubes[j][skipIdx].y += cubes[j][skipIdx].ySpeed;
+                cubes[j][skipIdx].z += cubes[j][skipIdx].zSpeed;
+
+                // check the walls
+                if (cubes[j][skipIdx].x > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].x < -lgCubeSize / 2 + WALL_OFFSET) {
+                    cubes[j][skipIdx].xSpeed *= -1;
+                }
+                if (cubes[j][skipIdx].y > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].y < -lgCubeSize / 2 + WALL_OFFSET) {
+                    cubes[j][skipIdx].ySpeed *= -1;
+                }
+                if (cubes[j][skipIdx].z > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].z < -lgCubeSize / 2 + WALL_OFFSET) {
+                    cubes[j][skipIdx].zSpeed *= -1;
+                }
+                //still keep the position change
+            }
+        }
+        //draw the selected text cubes first
 
         for (let i = 0; i < cubes[j].length; i++) {
+            if (i == skipIdx){
+                continue;
+            }
+            //skip selected text cubes
             let tc = cubes[j][i];
             push();
 
@@ -196,6 +244,9 @@ class PointUV {
 
 class Cube {
     constructor(name, sz, p) {
+        //for zooming
+        this.showingTextCube = null;
+
         this.tex = p;
         this.id = name;
         this.scale = 1;
@@ -262,7 +313,7 @@ class Cube {
         //fill(250);
         //tint(255, CUBE_ALPHA);
         //texture(this.tex);
-        fill(255,CUBE_ALPHA);
+        fill(255, CUBE_ALPHA);
         //noStroke();
         stroke(255);
         strokeWeight(1.5);
@@ -300,7 +351,7 @@ class Cube {
 
         //utimate form: use box, not sure if ok for zooming ect.
         box(a);
-        
+
     }
 }
 
@@ -312,8 +363,20 @@ class TextCube {
         }
         this.parent = cube;
 
+        this.tcArray = new Array(this.tc.length);
+        for (let i = 0; i < this.tcArray.length; i++) {
+            let r = red(this.tc[i]);
+            let g = green(this.tc[i]);
+            let b = blue(this.tc[i]);
+            let cArray = [r, g, b];
+            this.tcArray[i] = cArray;
+        }
+        //for zooming tint
+
         this.rotating = true;
         //to rotate the cubes
+        this.selected = false;
+        //for zooming
 
         this.tex = texture;
         this.id = id;
@@ -393,7 +456,11 @@ class TextCube {
         for (let i = 0; i < 6; i++) {
             noStroke();
             fill(255);
-            tint(this.tc[i]);
+            if (!this.selected) {
+                tint(this.tc[i]);
+            } else {
+                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], 100);
+            }
             texture(this.tex);
             push();
             if (i == 0) {
@@ -459,7 +526,22 @@ function createCubes() {
 /*********************************************/
 /**** INTERACTION *******/
 /*********************************************/
+function zooming(lcIndex, tcIndex) {
+    let lcTochange = largeCubes[lcIndex];
+    if (lcTochange.showingTextCube === null) {
+        //no text is showing on this large cube 
+        let tcToZoom = cubes[lcIndex][tcIndex];
+        tcToZoom.selected = true;
+        //selectedTextCubes.push(tcToZoom);
+        let idxPair = [lcIndex, tcIndex];
+        selectedTextCubesIdx.push(idxPair);
+        if (!tcToZoom.setScale(1.1)) {
+            lcTochange.showingTextCube = tcToZoom;
+        }
+    }
+}
 function handleZoom() {
+    //this might need to be rewrite since new ways of rendering is applied
     if (selectedCubeIdx < 0) {
         console.log(selectedParentIdx, cubes[selectedParentIdx]);
         selectedCubeIdx = Math.floor(Math.random(cubes[selectedParentIdx].length));
@@ -670,24 +752,38 @@ function clearCube(j) {
 // }
 
 function mousePressed() {
-    selectedParentIdx = 1;
-    if (mouseX < width / 3)
-        selectedParentIdx = 0;
-    else if (mouseX > width * .66)
-        selectedParentIdx = 2;
+    // selectedParentIdx = 1;
+    // if (mouseX < width / 3)
+    //     selectedParentIdx = 0;
+    // else if (mouseX > width * .66)
+    //     selectedParentIdx = 2;
     // console.log(selectedParentIdx);
 }
 
 function mouseReleased() {
-    if (selectedParentIdx > -1 && selectedCubeIdx > -1) { // do we have a selection      
-        if (cubes[selectedParentIdx][selectedCubeIdx].scale < maxSize) {
-            clear(selectedParentIdx);
-            // unset the selected color here?
-        } else
-            updateText(); // TODO
+    // if (selectedParentIdx > -1 && selectedCubeIdx > -1) { // do we have a selection      
+    //     if (cubes[selectedParentIdx][selectedCubeIdx].scale < maxSize) {
+    //         clear(selectedParentIdx);
+    //         // unset the selected color here?
+    //     } else
+    //         updateText(); // TODO
+    // }
+
+    // selectedParentIdx = -1;
+    // selectedCubeIdx = -1;
+
+}
+
+function mouseClicked(){
+    if (mouseY > height * .2 && mouseY < height * .6) {
+        let largeCubeToChange = 1;
+        if (mouseX < width / 3) {
+            largeCubeToChange = 0;
+        } else if (mouseX > width * 2 / 3) {
+            largeCubeToChange = 2;
+        }
+        let chosenTc = floor(random(cubes[largeCubeToChange].length));
+        let idxPair = [largeCubeToChange, chosenTc];
+        changingCubes.push(idxPair);
     }
-
-    selectedParentIdx = -1;
-    selectedCubeIdx = -1;
-
 }
