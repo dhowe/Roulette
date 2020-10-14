@@ -120,12 +120,9 @@ function setup() {
 function draw() {
 
     background(200);
-    //
+    
     drawCubes();
-    //if (mouseIsPressed && mouseY > height * .2 && mouseY < height * .6) {
-    // handleZoom();
-    // TODO
-    //}
+    
     if (changingCubes.length > 0) {
         for (let i = 0; i < changingCubes.length; i++) {
             zooming(changingCubes[i][0], changingCubes[i][1]);
@@ -529,15 +526,6 @@ function zooming(lcIndex, tcIndex) {
             lcTochange.showingTextCube = tcToZoom;
         }
     }
-}
-function handleZoom() {
-    //this might need to be rewrite since new ways of rendering is applied
-    if (selectedCubeIdx < 0) {
-        console.log(selectedParentIdx, cubes[selectedParentIdx]);
-        selectedCubeIdx = Math.floor(Math.random(cubes[selectedParentIdx].length));
-        selectCube(selectedParentIdx, selectedCubeIdx);
-    }
-    cubes[selectedParentIdx][selectedCubeIdx].setScale(1.1);
 }
 
 function selectCube(parentIdx, idx) {
