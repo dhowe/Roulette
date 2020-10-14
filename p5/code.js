@@ -453,7 +453,7 @@ class TextCube {
             if (!this.selected) {
                 tint(this.tc[i]);
             } else {
-                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], map(this.scale, 1, maxSize, 255, 190));
+                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], map(this.scale * this.scale, 1, maxSize * maxSize, 255, 180));
             }
             texture(this.tex);
             push();
@@ -532,7 +532,7 @@ function zooming(lcIndex, tcIndex) {
         //selectedTextCubes.push(tcToZoom);
         let idxPair = [lcIndex, tcIndex];
         selectedTextCubesIdx.push(idxPair);
-        if (!tcToZoom.setScale(1.1)) {
+        if (!tcToZoom.setScale(map(tcToZoom.scale,0,maxSize,1.09,1.1))) {
             //zooming is done
             lcTochange.showingTextCube = tcToZoom;
             lcTochange.inAnimation = false;
@@ -543,7 +543,7 @@ function zooming(lcIndex, tcIndex) {
         //text cube shrink
         lcTochange.inAnimation = true;
         lcTochange.showingTextCube.selected = false;
-        if (!lcTochange.showingTextCube.setScale(.9)) {
+        if (!lcTochange.showingTextCube.setScale(map(lcTochange.showingTextCube.scale,maxSize,0,0.89,0.9))) {
             //animation end
             lcTochange.inAnimation = false;
             lcTochange.showingTextCube = null;
