@@ -1,4 +1,17 @@
 var img;
+let colors = [
+    '#f9f9f9', // white (text)
+    '#eaf9f2', // light-teal
+    '#f4dc00', // yellow
+    '#6f84b1', // slate
+    '#cee9e2', // teal
+    '#de5e05', // orange
+    '#bc4e8d', // pink
+    '#1d6a0a', // green
+    '#21378a', // blue
+    '#7c0b00' // red      
+];
+
 function preload() {
     img = loadImage("../src/data/1.png");
 }
@@ -18,7 +31,8 @@ function setup() {
     b = blue(c);
     cA = [r, g, b];
     console.log(r, g, b);
-
+    cub = new Cube(1, 20, img);
+    suc = new Cube(1, 100, img);
 }
 
 let v = [
@@ -100,8 +114,7 @@ function draw() {
     fill(233, 0, 233);
     box(20);
     pop();
-    let suc = new Cube(1,50,img);
-    suc.draw();
+
 
     // for (let i = 0; i < 6; i++) {
     //     noStroke();
@@ -153,7 +166,7 @@ function draw() {
     // pop();
 
     //use class
-    let cub = new Cube(1,100,img);
+    suc.draw();
     cub.draw();
 
     push();
@@ -162,7 +175,7 @@ function draw() {
     pop();
 
     pop();
-    
+
     // //use box()
     // push();
     // fill(255,64);
@@ -174,30 +187,49 @@ function draw() {
 
 }
 
+function mousePressed() {
+    cub.setScale(1.1);
+}
+
 class Cube {
     constructor(name, a, texture) {
         this.id = name;
         this.w = this.h = this.d = a;
         this.tex = texture;
+        this.scale = 1;
+        this.tc = new Array(6);
+        for (let i = 0; i < this.tc.length; i++) {
+            this.tc[i] = color(colors[Math.floor(random(colors.length))]);
+        }
+        this.tcArray = new Array(this.tc.length);
+        for (let i = 0; i < this.tcArray.length; i++) {
+            let r = red(this.tc[i]);
+            let g = green(this.tc[i]);
+            let b = blue(this.tc[i]);
+            let cArray = [r, g, b];
+            this.tcArray[i] = cArray;
+        }
     }
 
     draw() {
+        let a = this.w * this.scale;
+        //to zoom the cubes
+        let d = a / 2
         for (let i = 0; i < 6; i++) {
             noStroke();
-            noFill();
+            //fill(255);
+            if (this.scale <= 1) {
+                tint(this.tc[i]);
+            } else {
+                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], 100);
+            }
             texture(this.tex);
-            tint(cA[0], cA[1], cA[2], 100);
-            //fill(255,64);
-            //stroke(255);
-            //texture(pg);
-            let d = this.w / 2;
             push();
             if (i == 0) {
                 //front
-                rotateX(PI);
                 translate(0, 0, d);
             } else if (i == 1) {
-                //left *
+                //left
                 translate(-d, 0, 0);
                 rotateY(-PI / 2);
             } else if (i == 2) {
@@ -205,9 +237,9 @@ class Cube {
                 translate(d, 0, 0);
                 rotateY(PI / 2);
             } else if (i == 3) {
-                //back *
-                rotateX(PI);
+                //back
                 translate(0, 0, -d);
+                rotateX(PI);
             } else if (i == 4) {
                 //top
                 translate(0, -d, 0);
@@ -217,8 +249,19 @@ class Cube {
                 translate(0, d, 0);
                 rotateX(PI / 2);
             }
-            plane(this.w, this.w);
+            plane(a, a);
             pop();
         }
+    }
+
+    setScale(factor) {
+        if (factor > 1 && this.scale >= 9) {
+            return false;
+        }
+        if (factor < 1 && this.scale <= 1) {
+            return false;
+        }
+        this.scale *= factor;
+        return true;
     }
 }

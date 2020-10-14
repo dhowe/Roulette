@@ -123,12 +123,12 @@ function draw() {
     //
     drawCubes();
     //if (mouseIsPressed && mouseY > height * .2 && mouseY < height * .6) {
-        // handleZoom();
-        // TODO
+    // handleZoom();
+    // TODO
     //}
     if (changingCubes.length > 0) {
-        for (let i = 0; i < changingCubes.length; i ++) {
-            zooming(changingCubes[i][0],changingCubes[i][1]);
+        for (let i = 0; i < changingCubes.length; i++) {
+            zooming(changingCubes[i][0], changingCubes[i][1]);
         }
     }
 
@@ -163,54 +163,33 @@ function drawCubes() {
             let idxPair = selectedTextCubesIdx[i];
             if (idxPair[0] == j) {
                 skipIdx = idxPair[1];
-                let selectedTc = cubes[j][idxPair[1]];
-                push();
-                scale(selectedTc.scale);
-                selectedTc.draw();
-                pop();
-                // adjust the speeds
-                cubes[j][skipIdx].x += cubes[j][skipIdx].xSpeed;
-                cubes[j][skipIdx].y += cubes[j][skipIdx].ySpeed;
-                cubes[j][skipIdx].z += cubes[j][skipIdx].zSpeed;
-
-                // check the walls
-                if (cubes[j][skipIdx].x > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].x < -lgCubeSize / 2 + WALL_OFFSET) {
-                    cubes[j][skipIdx].xSpeed *= -1;
-                }
-                if (cubes[j][skipIdx].y > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].y < -lgCubeSize / 2 + WALL_OFFSET) {
-                    cubes[j][skipIdx].ySpeed *= -1;
-                }
-                if (cubes[j][skipIdx].z > lgCubeSize / 2 - WALL_OFFSET || cubes[j][skipIdx].z < -lgCubeSize / 2 + WALL_OFFSET) {
-                    cubes[j][skipIdx].zSpeed *= -1;
-                }
-                //still keep the position change
             }
         }
-        //draw the selected text cubes first
+        //draw the selected text cubes last find it and skip it first
 
         for (let i = 0; i < cubes[j].length; i++) {
-            if (i == skipIdx){
-                continue;
+            if (i == skipIdx) {
+                //don't draw
+            } else {
+                //draw
+                let tc = cubes[j][i];
+                push();
+
+                if (!tc.selected && !tc.stopped)
+                    translate(tc.x, tc.y, tc.z);
+
+                if (!tc.selected && tc.rotating) {
+                    rotateX(frameCount * PI / tc.xRot);
+                    rotateY(frameCount * PI / tc.yRot);
+                    rotateZ(frameCount * PI / tc.zRot);
+                }
+                if (tc.scale > 1 && !tc.selected)
+                    tc.setScale(.95);
+
+                //scale(tc.scale);
+                tc.draw();
+                pop();
             }
-            //skip selected text cubes
-            let tc = cubes[j][i];
-            push();
-
-            if (!tc.selected && !tc.stopped)
-                translate(tc.x, tc.y, tc.z);
-
-            if (!tc.selected && tc.rotating) {
-                rotateX(frameCount * PI / tc.xRot);
-                rotateY(frameCount * PI / tc.yRot);
-                rotateZ(frameCount * PI / tc.zRot);
-            }
-            if (tc.scale > 1 && !tc.selected)
-                tc.setScale(.95);
-
-            scale(tc.scale);
-            tc.draw();
-            pop();
-
             // adjust the speeds
             cubes[j][i].x += cubes[j][i].xSpeed;
             cubes[j][i].y += cubes[j][i].ySpeed;
@@ -224,7 +203,17 @@ function drawCubes() {
             if (cubes[j][i].z > lgCubeSize / 2 - WALL_OFFSET || cubes[j][i].z < -lgCubeSize / 2 + WALL_OFFSET)
                 cubes[j][i].zSpeed *= -1;
         }
-        largeCubes[j].draw();
+        //now draw the selected cube
+        if (skipIdx > -1) {
+            let selectedTc = cubes[j][skipIdx];
+            push();
+            selectedTc.draw();
+            pop();
+        }
+
+        if (!largeCubes[j].showingTextCube){
+            largeCubes[j].draw();
+        }
 
         pop();
     }
@@ -451,15 +440,16 @@ class TextCube {
         // }
 
         //use plane => no need veritces
-        let a = this.w;
-        let d = a/2
+        let a = this.w * this.scale;
+        //to zoom the cubes
+        let d = a / 2
         for (let i = 0; i < 6; i++) {
             noStroke();
-            fill(255);
+            //fill(255);
             if (!this.selected) {
                 tint(this.tc[i]);
             } else {
-                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], 100);
+                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], map(this.scale, 1, maxSize, 255, 150));
             }
             texture(this.tex);
             push();
@@ -774,7 +764,7 @@ function mouseReleased() {
 
 }
 
-function mouseClicked(){
+function mouseClicked() {
     if (mouseY > height * .2 && mouseY < height * .6) {
         let largeCubeToChange = 1;
         if (mouseX < width / 3) {
