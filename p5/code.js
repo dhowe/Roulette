@@ -180,8 +180,6 @@ function drawCubes() {
                     rotateY(frameCount * PI / tc.yRot);
                     rotateZ(frameCount * PI / tc.zRot);
                 }
-                if (tc.scale > 1 && !tc.selected)
-                    tc.setScale(.95);
 
                 //scale(tc.scale);
                 tc.draw();
@@ -204,11 +202,19 @@ function drawCubes() {
         if (skipIdx > -1) {
             let selectedTc = cubes[j][skipIdx];
             push();
+            if (!selectedTc.selected && !selectedTc.stopped)
+                translate(selectedTc.x, selectedTc.y, selectedTc.z);
+
+            if (!selectedTc.selected && selectedTc.rotating) {
+                rotateX(frameCount * PI / selectedTc.xRot);
+                rotateY(frameCount * PI / selectedTc.yRot);
+                rotateZ(frameCount * PI / selectedTc.zRot);
+            }
             selectedTc.draw();
             pop();
         }
 
-        if (!largeCubes[j].showingTextCube) {
+        if (!largeCubes[j].showingTextCube || largeCubes[j].inAnimation) {
             largeCubes[j].draw();
         }
 
@@ -515,9 +521,11 @@ function createCubes() {
 /**** INTERACTION *******/
 /*********************************************/
 function zooming(lcIndex, tcIndex) {
+    tcIndex = tcIndex || -1;
     let lcTochange = largeCubes[lcIndex];
-    if (lcTochange.showingTextCube === null) {
+    if (lcTochange.showingTextCube === null && tcIndex > -1) {
         //no text is showing on this large cube 
+        //text cube enlarge
         let tcToZoom = cubes[lcIndex][tcIndex];
         tcToZoom.selected = true;
         lcTochange.inAnimation = true;
@@ -531,6 +539,26 @@ function zooming(lcIndex, tcIndex) {
             //erase this pair in changingCubes
             changingCubes.splice(changingCubes.indexOf(idxPair), 1);
         }
+    } else {
+        //text cube shrink
+        lcTochange.inAnimation = true;
+        lcTochange.showingTextCube.selected = false;
+        if (!lcTochange.showingTextCube.setScale(.9)) {
+            //animation end
+            lcTochange.inAnimation = false;
+            lcTochange.showingTextCube = null;
+            let idx;
+            for (let i = 0; i < selectedTextCubesIdx; i++) {
+                if (selectedTextCubesIdx.indexOf(lcIndex) > -1) {
+                    idx = i;
+                }
+            }
+            selectedTextCubesIdx.splice(idx, 1);
+            //erase this pair in changingCubes
+            changingCubes.splice(changingCubes.indexOf([lcIndex]), 1);
+
+        }
+
     }
 }
 
@@ -766,10 +794,14 @@ function mouseClicked() {
         } else if (mouseX > width * 2 / 3) {
             largeCubeToChangeIdx = 2;
         }
-        if (largeCubes[largeCubeToChangeIdx].showingTextCube == null && !largeCubes[largeCubeToChangeIdx].inAnimation) {
-            let chosenTcIdx = floor(random(cubes[largeCubeToChangeIdx].length));
-            let idxPair = [largeCubeToChangeIdx, chosenTcIdx];
-            changingCubes.push(idxPair);
+        if (!largeCubes[largeCubeToChangeIdx].inAnimation) {
+            if (largeCubes[largeCubeToChangeIdx].showingTextCube == null) {
+                let chosenTcIdx = floor(random(cubes[largeCubeToChangeIdx].length));
+                let idxPair = [largeCubeToChangeIdx, chosenTcIdx];
+                changingCubes.push(idxPair);
+            } else {
+                changingCubes.push([largeCubeToChangeIdx]);
+            }
         }
     }
 }
