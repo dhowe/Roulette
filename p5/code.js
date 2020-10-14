@@ -449,7 +449,7 @@ class TextCube {
             if (!this.selected) {
                 tint(this.tc[i]);
             } else {
-                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], map(this.scale, 1, maxSize, 255, 150));
+                tint(this.tcArray[i][0], this.tcArray[i][1], this.tcArray[i][2], map(this.scale, 1, maxSize, 255, 190));
             }
             texture(this.tex);
             push();
