@@ -335,7 +335,7 @@ class Cube {
         //     pop();
         // }
 
-        //utimate form: use box, not sure if ok for zooming ect.
+        //utimate form: use box()
         box(a);
 
     }
@@ -523,7 +523,10 @@ function zooming(lcIndex, tcIndex) {
         let idxPair = [lcIndex, tcIndex];
         selectedTextCubesIdx.push(idxPair);
         if (!tcToZoom.setScale(1.1)) {
+            //zooming is done
             lcTochange.showingTextCube = tcToZoom;
+            //erase this pair in changingCubes
+            changingCubes.splice(changingCubes.indexOf(idxPair),1);
         }
     }
 }
@@ -754,14 +757,14 @@ function mouseReleased() {
 
 function mouseClicked() {
     if (mouseY > height * .2 && mouseY < height * .6) {
-        let largeCubeToChange = 1;
+        let largeCubeToChangeIdx = 1;
         if (mouseX < width / 3) {
-            largeCubeToChange = 0;
+            largeCubeToChangeIdx = 0;
         } else if (mouseX > width * 2 / 3) {
-            largeCubeToChange = 2;
+            largeCubeToChangeIdx = 2;
         }
-        let chosenTc = floor(random(cubes[largeCubeToChange].length));
-        let idxPair = [largeCubeToChange, chosenTc];
+        let chosenTcIdx = floor(random(cubes[largeCubeToChangeIdx].length));
+        let idxPair = [largeCubeToChangeIdx, chosenTcIdx];
         changingCubes.push(idxPair);
     }
 }
