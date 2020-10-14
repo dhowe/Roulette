@@ -120,9 +120,9 @@ function setup() {
 function draw() {
 
     background(200);
-    
+
     drawCubes();
-    
+
     if (changingCubes.length > 0) {
         for (let i = 0; i < changingCubes.length; i++) {
             zooming(changingCubes[i][0], changingCubes[i][1]);
@@ -208,7 +208,7 @@ function drawCubes() {
             pop();
         }
 
-        if (!largeCubes[j].showingTextCube){
+        if (!largeCubes[j].showingTextCube) {
             largeCubes[j].draw();
         }
 
@@ -232,6 +232,7 @@ class Cube {
     constructor(name, sz, p) {
         //for zooming
         this.showingTextCube = null;
+        this.inAnimation = false;
 
         this.tex = p;
         this.id = name;
@@ -519,14 +520,16 @@ function zooming(lcIndex, tcIndex) {
         //no text is showing on this large cube 
         let tcToZoom = cubes[lcIndex][tcIndex];
         tcToZoom.selected = true;
+        lcTochange.inAnimation = true;
         //selectedTextCubes.push(tcToZoom);
         let idxPair = [lcIndex, tcIndex];
         selectedTextCubesIdx.push(idxPair);
         if (!tcToZoom.setScale(1.1)) {
             //zooming is done
             lcTochange.showingTextCube = tcToZoom;
+            lcTochange.inAnimation = false;
             //erase this pair in changingCubes
-            changingCubes.splice(changingCubes.indexOf(idxPair),1);
+            changingCubes.splice(changingCubes.indexOf(idxPair), 1);
         }
     }
 }
@@ -763,8 +766,10 @@ function mouseClicked() {
         } else if (mouseX > width * 2 / 3) {
             largeCubeToChangeIdx = 2;
         }
-        let chosenTcIdx = floor(random(cubes[largeCubeToChangeIdx].length));
-        let idxPair = [largeCubeToChangeIdx, chosenTcIdx];
-        changingCubes.push(idxPair);
+        if (largeCubes[largeCubeToChangeIdx].showingTextCube == null && !largeCubes[largeCubeToChangeIdx].inAnimation) {
+            let chosenTcIdx = floor(random(cubes[largeCubeToChangeIdx].length));
+            let idxPair = [largeCubeToChangeIdx, chosenTcIdx];
+            changingCubes.push(idxPair);
+        }
     }
 }
