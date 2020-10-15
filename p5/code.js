@@ -532,14 +532,27 @@ function zooming(lcIndex, tcIndex) {
         //selectedTextCubes.push(tcToZoom);
         let idxPair = [lcIndex, tcIndex];
         selectedTextCubesIdx.push(idxPair);
-        if (!tcToZoom.setScale(map(tcToZoom.scale,0,maxSize,1.09,1.1))) {
-            //zooming is done
-            lcTochange.showingTextCube = tcToZoom;
-            lcTochange.inAnimation = false;
-            //erase this pair in changingCubes
-            changingCubes.splice(changingCubes.indexOf(idxPair), 1);
+        if (mouseIsPressed) {
+            //mouse pressing, enlarge
+            if (!tcToZoom.setScale(map(tcToZoom.scale,0,maxSize,1.09,1.1))) {
+                //zooming is done
+                lcTochange.showingTextCube = tcToZoom;
+                lcTochange.inAnimation = false;
+                //erase this pair in changingCubes
+                changingCubes.splice(changingCubes.indexOf(idxPair), 1);
+            }
+        } else {
+            //mouse released, shrink
+            if (!tcToZoom.setScale(map(tcToZoom.scale,0,maxSize,.89,.9))) {
+                //back to small
+                lcTochange.inAnimation = false;
+                tcToZoom.selected = false;
+                //erase this pair in changingCubes
+                changingCubes.splice(changingCubes.indexOf(idxPair), 1);
+            }
+
         }
-    } else {
+    } else if (lcTochange.showingTextCube != null) {
         //text cube shrink
         lcTochange.inAnimation = true;
         lcTochange.showingTextCube.selected = false;
@@ -763,14 +776,14 @@ function clearCube(j) {
 //     toAdd.push(next);
 // }
 
-function mousePressed() {
-    // selectedParentIdx = 1;
-    // if (mouseX < width / 3)
-    //     selectedParentIdx = 0;
-    // else if (mouseX > width * .66)
-    //     selectedParentIdx = 2;
-    // console.log(selectedParentIdx);
-}
+// function mousePressed() {
+//     // selectedParentIdx = 1;
+//     // if (mouseX < width / 3)
+//     //     selectedParentIdx = 0;
+//     // else if (mouseX > width * .66)
+//     //     selectedParentIdx = 2;
+//     // console.log(selectedParentIdx);
+// }
 
 function mouseReleased() {
     // if (selectedParentIdx > -1 && selectedCubeIdx > -1) { // do we have a selection      
@@ -786,7 +799,7 @@ function mouseReleased() {
 
 }
 
-function mouseClicked() {
+function mousePressed() {
     if (mouseY > height * .2 && mouseY < height * .6) {
         let largeCubeToChangeIdx = 1;
         if (mouseX < width / 3) {
